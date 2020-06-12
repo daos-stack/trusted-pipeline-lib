@@ -38,17 +38,17 @@ def call(Map config = [:]) {
   def is_gitlab = false
   if (env.GIT_URL) {
     // First thing is to determine if this is GitHub or GitLab
-    is_github = env.GIT_URL.contains('.github.com/')
+    is_github = env.GIT_URL.contains('github.com/')
     is_gitlab = env.GIT_URL.contains('gitlab')
   }
   Map params = [:]
 
   if (is_github) {
     if (config['credentialsId']) {
-      param['credentialsId'] = config['credentialsId']
+      params['credentialsId'] = config['credentialsId']
     } else {
       if (env.SCM_COMMIT_STATUS_ID) {
-        param['credentialsId'] = env.SCM_COMMIT_STATUS_ID
+        params['credentialsId'] = env.SCM_COMMIT_STATUS_ID
       } else {
         steps.println ('Jenkins not configured to notify GitLab')
       }
@@ -60,6 +60,7 @@ def call(Map config = [:]) {
       params['targetUrl'] = config['targetUrl']
     }
     steps.githubNotify params
+    return
   }
   if (is_gitlab) {
     params['state'] = config['status'].toLowerCase()
@@ -68,5 +69,7 @@ def call(Map config = [:]) {
     }
     params['name'] = config.get('context', "build/" + env.STAGE_NAME)
     steps.updateGitlabCommitStatus params
+    return
   }
+  println "Could not detect SCM system!"
 }

@@ -17,7 +17,6 @@
 // is landed, both PR branches can be deleted.
 
 // @Library(value="pipeline-lib@my_pr_branch") _
-@Library(value="trusted-pipeline-lib@corci-918") _
 
 pipeline {
   agent { label 'lightweight' }
