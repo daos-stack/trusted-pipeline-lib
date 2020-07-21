@@ -16,7 +16,7 @@
 // Then a second PR submitted to comment out the @Library line, and when it
 // is landed, both PR branches can be deleted.
 
-// @Library(value="pipeline-lib@my_pr_branch") _
+// @Library(value="trusted-pipeline-lib@my_pr_branch") _
 
 pipeline {
   agent { label 'lightweight' }
