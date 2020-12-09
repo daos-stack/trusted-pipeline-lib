@@ -10,11 +10,11 @@ def call(Map config = [:]) {
   echo buildCauses
   if (buildCauses.contains("hudson.triggers.TimerTrigger")){
     buildUser = "TimerTrigger"
-  } else {
+  } /* jelse {
     wrap([$class: 'BuildUser']) {
       buildUser = "${BUILD_USER}"
     }
-  }
+  }*/
   echo "Initiated by: ${buildUser}"
 
 }
