@@ -7,7 +7,7 @@ Boolean call(Map config = [:]) {
 
   String buildUser = "Unknown"
   def buildCauses = currentBuild.rawBuild.getCauses()
-  echo buildCauses
+  //echo buildCauses
   echo buildCauses.getShortDescription()
   echo buildCauses.getUserId() 
   echo buildCauses.getUserName() 
