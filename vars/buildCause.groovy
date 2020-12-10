@@ -6,7 +6,7 @@
 Boolean call(Map config = [:]) {
 
   String buildUser = "Unknown"
-  if (${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause}) {
+  if (${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)}) {
     println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
   } else {
     println "currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) is null"
