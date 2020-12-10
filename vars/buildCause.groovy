@@ -6,6 +6,9 @@
 Boolean call(Map config = [:]) {
 
   String buildUser = "Unknown"
+  println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
+
+  /*
   def buildCauses = currentBuild.rawBuild.getCauses()
   //echo buildCauses
   echo buildCauses.getShortDescription()
@@ -15,6 +18,7 @@ Boolean call(Map config = [:]) {
   echo buildCauses.hashCode() 
   if (buildCauses.contains("hudson.triggers.TimerTrigger")){
     buildUser = "TimerTrigger"
+    */
   } /* jelse {
     wrap([$class: 'BuildUser']) {
       buildUser = "${BUILD_USER}"
