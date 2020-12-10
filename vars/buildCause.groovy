@@ -18,8 +18,7 @@ Boolean call(Map config = [:]) {
   echo buildCauses.hashCode() 
   if (buildCauses.contains("hudson.triggers.TimerTrigger")){
     buildUser = "TimerTrigger"
-    */
-  } /* jelse {
+  }*/ /* else {
     wrap([$class: 'BuildUser']) {
       buildUser = "${BUILD_USER}"
     }
