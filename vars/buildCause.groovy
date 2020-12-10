@@ -9,7 +9,9 @@ Boolean call(Map config = [:]) {
   if (currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)) {
     println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
   } else {
-    println "currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) is null"
+    println "currentBuild.rawBuild.getCause(hudson.model.Cause\$UserIdCause) is null"
+    println "so, " + currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
+    println "and " + currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').isEmpty()
   }
   /* [userName:Brian J. Murrell,
       userIdOrUnknown:bmurrell,
