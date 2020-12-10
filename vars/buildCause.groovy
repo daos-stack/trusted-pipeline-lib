@@ -13,7 +13,9 @@ Boolean call(Map config = [:]) {
   // Get a specific Cause type (in this case the user who kicked off the build),
   // if present.
   def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
-  print "specificCause: " + specificCause
+  println "specificCause: " + specificCause
+
+  println currentBuild.getBuildCauses().shortDescription[0]
 
   /*
   def buildCauses = currentBuild.rawBuild.getCauses()
