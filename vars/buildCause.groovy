@@ -7,6 +7,13 @@ Boolean call(Map config = [:]) {
 
   String buildUser = "Unknown"
   println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
+  //[userName:Brian J. Murrell, userIdOrUnknown:bmurrell, userId:bmurrell, class:class hudson.model.Cause$UserIdCause, userUrl:user/bmurrell, shortDescription:Started by user Brian J. Murrell]
+  def causes = currentBuild.getBuildCauses()
+
+  // Get a specific Cause type (in this case the user who kicked off the build),
+  // if present.
+  def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+  print "specificCause: " + specificCause
 
   /*
   def buildCauses = currentBuild.rawBuild.getCauses()
