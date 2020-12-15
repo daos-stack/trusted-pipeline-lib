@@ -8,7 +8,7 @@
  */
 String call(Map config = [:]) {
 
-    if (config['debug']){
+    if (true || config['debug']){
         println("checking currentBuild.changeSets")
 
         String comment = "Not found"
