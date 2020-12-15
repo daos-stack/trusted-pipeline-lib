@@ -9,21 +9,21 @@
  * config['pragma']     Pragma to get the value of
  * config['def_val']    Value to return if not found
  */
+
+import java.util.regex.Pattern
+
 def call(Map config = [:]) {
 
     def def_value = ''
     if (config['def_val']) {
         def_value = config['def_val']
     }
-    def value = sh(script: '''b=$(git show -s --format=%B |
-                                  sed -ne 's/^''' + config['pragma'] +
-                           ''': *\\(.*\\)/\\1/p')
-                              if [ -n "$b" ]; then
-                                  echo "$b"
-                              else
-                                  echo "''' + def_value + '''"
-                              fi''',
-                returnStdout: true)
-    return value.trim()
+    msg = getFinalCommitComment()
+    try {
+        def (_,val) = (msg =~ /(?mi)^${config['pragma']}:\s*(.+)$/)[0]
+        return val
+    } catch (java.lang.IndexOutOfBoundsException e) {
+        return def_value
+    }
 
 }
