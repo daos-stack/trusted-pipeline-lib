@@ -16,7 +16,7 @@
 // Then a second PR submitted to comment out the @Library line, and when it
 // is landed, both PR branches can be deleted.
 
-// @Library(value="pipeline-lib@my_pr_branch") _
+// @Library(value="trusted-pipeline-lib@my_pr_branch") _
 
 pipeline {
   agent { label 'lightweight' }
@@ -28,15 +28,30 @@ pipeline {
       }
     } // stage('Cancel Previous Builds')
 
-    stage ('Test') {
+    // dont run these in parallel as the env.COMMIT_MESSAGE is shared between
+    // the parallel stages and taints one another
+    stage ('No env.COMMIT_MESSAGE pragma test') {
       steps {
-        sh label: 'Pragma test',
-           script: 'sleep ' +
-                    commitPragmaTrusted(pragma: 'Sleep-minutes',
-                                        def_val: '1')
+        script {
+          assert(commitPragmaTrusted(pragma: 'Sleep-seconds',
+                                     def_val: '1') == "1")
+        }
       } // steps
-    } // stage ('Test')
-  } //stages
+    } //stage ('No env.COMMIT_MESSAGE pragma test')
+    stage ('env.COMMIT_MESSAGE pragma test') {
+      steps {
+        script {
+          env.COMMIT_MESSAGE = '''A commit message
+
+Set in env.COMMIT_MESSAGE
+
+Sleep-seconds: 2'''
+          assert(commitPragmaTrusted(pragma: 'Sleep-seconds',
+                                     def_val: '1') == "2")
+        }
+      } // steps
+    } //stage ('env.COMMIT_MESSAGE pragma test')
+  } // stage ('Test')
   post {
     success {
       scmNotifyTrusted context: 'JENKINS',
