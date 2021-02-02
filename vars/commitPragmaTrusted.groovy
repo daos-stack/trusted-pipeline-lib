@@ -35,8 +35,8 @@ def call(Map config = [:]) {
         commit_message = sh(script: 'git show -s --format=%B',
                             returnStdout: true).trim()
     }
-    return sh(script: 'b=$(echo "' + commit_message + '''" |
-                           sed -ne 's/^''' + config['pragma'] +
+    return sh(script: 'b=$(echo "' + commit_message.replaceAll('"', '\\\\"') +
+                    '''" | sed -ne 's/^''' + config['pragma'] +
                     ''': *\\(.*\\)/\\1/p')
                        if [ -n "$b" ]; then
                            echo "$b"

@@ -15,8 +15,7 @@
 // That PR should be landed with out deleting the PR branch.
 // Then a second PR submitted to comment out the @Library line, and when it
 // is landed, both PR branches can be deleted.
-
-// @Library(value="trusted-pipeline-lib@my_pr_branch") _
+//@Library(value="trusted-pipeline-lib@my_pr_branch") _
 
 pipeline {
   agent { label 'lightweight' }
@@ -48,6 +47,17 @@ Set in env.COMMIT_MESSAGE
 Sleep-seconds: 2'''
           assert(commitPragmaTrusted(pragma: 'Sleep-seconds',
                                      def_val: '1') == "2")
+        }
+      } // steps
+    } //stage ('env.COMMIT_MESSAGE pragma test')
+    stage ('env.COMMIT_MESSAGE with double-quote test') {
+      steps {
+        script {
+          env.COMMIT_MESSAGE = 'A commit message with a "double quote"'
+          // just make sure this doesn't trip an error due to the double
+          // quotes
+          println(commitPragmaTrusted(pragma: 'Foo-bar:',
+                                     def_val: '1') == "1")
         }
       } // steps
     } //stage ('env.COMMIT_MESSAGE pragma test')
