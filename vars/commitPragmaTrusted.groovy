@@ -10,10 +10,19 @@
  * config['def_val']    Value to return if not found
  */
 def call(Map config = [:]) {
+        // convert the map for compat
+    return commitPragmaTrusted(config['pragma'], config['def_val'])
+}
+
+def call(String name, String def_val = null) {
+/**
+ * @param name       Pragma to get the value of
+ * @param def_val    Value to return if not found
+ */
 
     def def_value = ''
-    if (config['def_val']) {
-        def_value = config['def_val']
+    if (def_val) {
+        def_value = def_val
     }
 
     String commit_message=""
@@ -36,8 +45,8 @@ def call(Map config = [:]) {
                             returnStdout: true).trim()
     }
     return sh(script: 'b=$(echo "' + commit_message.replaceAll('"', '\\\\"') +
-                    '''" | sed -ne 's/^''' + config['pragma'] +
-                    ''': *\\(.*\\)/\\1/p')
+                    '''" | sed -ne 's/^''' + name +
+                    ''': *\\(.*\\)/\\1/Ip')
                        if [ -n "$b" ]; then
                            echo "$b"
                        else

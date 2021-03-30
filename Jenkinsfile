@@ -56,8 +56,22 @@ Sleep-seconds: 2'''
           env.COMMIT_MESSAGE = 'A commit message with a "double quote"'
           // just make sure this doesn't trip an error due to the double
           // quotes
-          println(commitPragmaTrusted(pragma: 'Foo-bar:',
+          assert(commitPragmaTrusted(pragma: 'Foo-bar',
                                      def_val: '1') == "1")
+        }
+      } // steps
+    } //stage ('env.COMMIT_MESSAGE pragma test')
+    stage ('env.COMMIT_MESSAGE case insensitivity test') {
+      steps {
+        script {
+          env.COMMIT_MESSAGE = '''A commit message
+
+Set in env.COMMIT_MESSAGE
+
+Sleep-seconds: 2'''
+          // just make sure this doesn't trip an error due to the double
+          // quotes
+          assert(commitPragmaTrusted('sleep-seconds', '1') == "2")
         }
       } // steps
     } //stage ('env.COMMIT_MESSAGE pragma test')
