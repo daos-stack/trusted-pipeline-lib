@@ -45,7 +45,7 @@ def call(String name, String def_val = null) {
                             returnStdout: true).trim()
     }
     return sh(script: 'b=$(echo "' + commit_message.replaceAll('"', '\\\\"') +
-                    '''" | sed -ne 's/^''' + name +
+                    '''" | sed -ne 's/^''' + name.replaceAll('/', '\\\\/') +
                     ''': *\\(.*\\)/\\1/Ip')
                        if [ -n "$b" ]; then
                            echo "$b"
