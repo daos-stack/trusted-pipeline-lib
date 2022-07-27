@@ -1,3 +1,4 @@
+/* groovylint-disable ParameterName, VariableName */
 // vars/commitPragmaTrusted.groovy
 
 /**
@@ -9,23 +10,23 @@
  * config['pragma']     Pragma to get the value of
  * config['def_val']    Value to return if not found
  */
-def call(Map config = [:]) {
+String call(Map config = [:]) {
         // convert the map for compat
     return commitPragmaTrusted(config['pragma'], config['def_val'])
 }
 
-def call(String name, String def_val = null) {
+String call(String name, String def_val = null) {
 /**
  * @param name       Pragma to get the value of
  * @param def_val    Value to return if not found
  */
 
-    def def_value = ''
+    String def_value = ''
     if (def_val) {
         def_value = def_val
     }
 
-    String commit_message=""
+    String commit_message = ""
     /* TODO: Replace all of this with currentBuild->changeSets
      *       https://build.hpdd.intel.com/pipeline-syntax/globals#currentBuild
      *       Something along the lines of:
