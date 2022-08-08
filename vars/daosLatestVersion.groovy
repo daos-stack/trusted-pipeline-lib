@@ -20,16 +20,19 @@ String call(String next_version='1000', String repo_type='stable') {
             // Must be a branch name, convert to a number
             switch (next_version) {
                 case 'master':
+                case 'weekly-testing':
                     _next_version = 1000
                     break
-                 case 'release/2.2':
+                case 'release/2.2':
+                case 'weekly-testing-2.2':
                     _next_version = 2.3
                     break
-                 case 'release/2.0':
+                case 'release/2.0':
+                case 'weekly-testing-2.0':
                     _next_version = 2.1
                     break
-                 default:
-                    error("Don't know what the latest version is for ${branch}")
+                default:
+                    error("Don't know what the latest version is for ${next_version}")
             }
         }
     }
