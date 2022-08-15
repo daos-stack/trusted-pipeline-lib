@@ -40,7 +40,7 @@ String call(String next_version='1000', String repo_type='stable') {
     String v = null
     try {
         v = sh(label: 'Get RPM packages version',
-               script: '$(command -v dnf) repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
+               script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/daos-stack-daos-el-8-x86_64-stable-local/' +
                      ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos-tests(x86-64) < ''' +
                                   _next_version + '''' |
