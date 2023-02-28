@@ -4,7 +4,6 @@
 /**
  * Method to get a commit pragma value
  *
- *
  * @param config Map of parameters passed.
  *
  * config['pragma']     Pragma to get the value of
@@ -26,7 +25,7 @@ String call(String name, String def_val = null) {
         def_value = def_val
     }
 
-    String commit_message = ""
+    String commit_message = ''
     /* TODO: Replace all of this with currentBuild->changeSets
      *       https://build.hpdd.intel.com/pipeline-syntax/globals#currentBuild
      *       Something along the lines of:
@@ -39,13 +38,20 @@ String call(String name, String def_val = null) {
      *           }
      *       }
      */
-    if (env.COMMIT_MESSAGE && env.COMMIT_MESSAGE != "") {
+    if (env.COMMIT_MESSAGE && env.COMMIT_MESSAGE != '') {
         commit_message = env.COMMIT_MESSAGE
     } else {
-        commit_message = sh(script: 'git show -s --format=%B',
+        String cmd = 'if [ -n "$GIT_CHECKOUT_DIR" ] && ' +
+                     '''[ -d "$GIT_CHECKOUT_DIR" ]; then
+                          cd "$GIT_CHECKOUT_DIR"
+                        fi
+                        git show -s --format=%B\n'''
+        commit_message = sh(label: 'Lookup commit message',
+                            script: cmd,
                             returnStdout: true).trim()
     }
-    return sh(script: 'b=$(echo "' + commit_message.replaceAll('"', '\\\\"') +
+    return sh(label: 'Sanitize commmit message',
+              script: 'b=$(echo "' + commit_message.replaceAll('"', '\\\\"') +
                     '''" | sed -ne 's/^''' + name.replaceAll('/', '\\\\/') +
                     ''': *\\(.*\\)/\\1/Ip')
                        if [ -n "$b" ]; then
@@ -54,5 +60,4 @@ String call(String name, String def_val = null) {
                            echo "''' + def_value + '''"
                        fi''',
               returnStdout: true).trim()
-
 }
