@@ -26,7 +26,7 @@ String call(String next_version='1000', String repo_type='stable') {
                 case 'weekly-testing':
                     _next_version = 1000
                     break
-                case ~/^(release|weekly).*(\/|-)(\d+)\.(\d+)/:
+                case ~/^(release|weekly).*(\/|-)(\d+)\.(\d+).*/:
                     major = Matcher.lastMatcher.group(3) as Integer
                     minor = Matcher.lastMatcher.group(4) as Integer
                     minor++
