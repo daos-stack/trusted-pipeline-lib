@@ -23,10 +23,9 @@ String call(String next_version='1000', String repo_type='stable') {
                 case 'weekly-testing':
                     _next_version = 1000
                     break
-                case ~/^(release|weekly).*(\/|-)(\d+\.\d+)/:
-                    version = Matcher.lastMatcher.group(3)
-                    major = version.split('.')[0] as Integer
-                    minor = version.split('.')[1] as Integer
+                case ~/^(release|weekly).*(\/|-)(\d+)\.(\d+)/:
+                    major = Matcher.lastMatcher.group(3) as Integer
+                    minor = Matcher.lastMatcher.group(4) as Integer
                     minor++
                     _next_version = new BigDecimal("${major}.${minor}")
                     break
