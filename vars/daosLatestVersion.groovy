@@ -8,6 +8,9 @@
    * @param repository type
    */
 // groovylint-disable-next-line UnusedMethodParameter
+
+import java.util.regex.Matcher
+
 String call(String next_version='1000', String repo_type='stable') {
     BigDecimal _next_version
     if (next_version == null) {
