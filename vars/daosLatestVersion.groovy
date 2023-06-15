@@ -8,6 +8,9 @@
    * @param repository type
    */
 // groovylint-disable-next-line UnusedMethodParameter
+
+import java.util.regex.Matcher
+
 String call(String next_version='1000', String repo_type='stable') {
     BigDecimal _next_version
     if (next_version == null) {
@@ -23,13 +26,11 @@ String call(String next_version='1000', String repo_type='stable') {
                 case 'weekly-testing':
                     _next_version = 1000
                     break
-                case 'release/2.2':
-                case 'weekly-testing-2.2':
-                    _next_version = 2.3
-                    break
-                case 'release/2.0':
-                case 'weekly-testing-2.0':
-                    _next_version = 2.1
+                case ~/^(release|weekly).*(\/|-)(\d+)\.(\d+).*/:
+                    major = Matcher.lastMatcher.group(3) as Integer
+                    minor = Matcher.lastMatcher.group(4) as Integer
+                    minor++
+                    _next_version = new BigDecimal("${major}.${minor}")
                     break
                 default:
                     error("Don't know what the latest version is for ${next_version}")
