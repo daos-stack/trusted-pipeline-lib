@@ -11,6 +11,26 @@
 
 import java.util.regex.Matcher
 
+String distro2repo(String distro=null) {
+    String _distro = distro ?: parseStageInfo()['target']
+
+    switch (_distro) {
+        case 'centos7':
+            return 'el-7'
+        case ~/centos8.*/:
+        case ~/el8.*/:
+            return 'el-8'
+        case ~/el9.*/:
+            return 'el-9'
+        case 'leap15':
+            return 'sl-15'
+        default:
+            error("Don't know how to map distro \"${_distro}\" to a repository name")
+            return false
+    }
+}
+
+/* groovylint-disable-next-line UnusedMethodParameter */
 String call(String next_version='1000', String repo_type='stable') {
     BigDecimal _next_version
     if (next_version == null) {
@@ -41,9 +61,9 @@ String call(String next_version='1000', String repo_type='stable') {
     String v = null
     try {
         v = sh(label: 'Get RPM packages version',
-               script: 'dnf --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
-                       '/artifactory/daos-stack-daos-el-8-x86_64-stable-local/' +
-                     ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos-tests < ''' +
+               script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
+                       '/artifactory/daos-stack-daos-' + distro2repo() + '-x86_64-stable-local/' +
+                     ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos-tests(x86-64) < ''' +
                                   _next_version + '''' |
                               rpmdev-sort | tail -1''',
                returnStdout: true).trim()
@@ -53,6 +73,10 @@ String call(String next_version='1000', String repo_type='stable') {
            script: 'hostname; pwd; df -h /var/cache; lsb_release -a || true')
         println('Error getting latest daos version.')
         throw e
+    }
+
+    if (!v) {
+        return ''
     }
 
     return v[0..<v.lastIndexOf('.')]

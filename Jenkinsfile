@@ -18,6 +18,7 @@
 // is landed, both PR branches can be deleted.
 //@Library(value="trusted-pipeline-lib@my_pr_branch") _
 
+/* groovylint-disable-next-line CompileStatic */
 pipeline {
     agent { label 'lightweight' }
     stages {
