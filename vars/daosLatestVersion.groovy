@@ -11,10 +11,8 @@
 
 import java.util.regex.Matcher
 
-String distro2repo(String distro=null) {
-    String _distro = distro ?: parseStageInfo()['target']
-
-    switch (_distro) {
+String distro2repo(String distro) {
+    switch (distro) {
         case 'centos7':
             return 'el-7'
         case ~/centos8.*/:
@@ -25,13 +23,15 @@ String distro2repo(String distro=null) {
         case 'leap15':
             return 'sl-15'
         default:
-            error("Don't know how to map distro \"${_distro}\" to a repository name")
+            error("Don't know how to map distro \"${distro}\" to a repository name")
             return false
     }
 }
 
 /* groovylint-disable-next-line UnusedMethodParameter */
-String call(String next_version='1000', String repo_type='stable') {
+String call(String next_version='1000', String distro=null) {
+    String _distro = distro ?: parseStageInfo()['target']
+
     BigDecimal _next_version
     if (next_version == null) {
         _next_version = 1000
@@ -62,8 +62,8 @@ String call(String next_version='1000', String repo_type='stable') {
     try {
         v = sh(label: 'Get RPM packages version',
                script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
-                       '/artifactory/daos-stack-daos-' + distro2repo() + '-x86_64-stable-local/' +
-                     ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos-tests(x86-64) < ''' +
+                       '/artifactory/daos-stack-daos-' + distro2repo(_distro) + '-x86_64-stable-local/' +
+                     ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
                                   _next_version + '''' |
                               rpmdev-sort | tail -1''',
                returnStdout: true).trim()
