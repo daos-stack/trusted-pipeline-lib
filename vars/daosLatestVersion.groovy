@@ -70,7 +70,7 @@ String call(String next_version='1000', String distro=null) {
     /* groovylint-disable-next-line CatchException */
     } catch (Exception e) {
         sh(label: 'Get debug info',
-           script: 'hostname; pwd; df -h /var/cache; lsb_release -a || true')
+           script: 'hostname; pwd; df -h /var/cache; cat /etc/os-release')
         println('Error getting latest daos version.')
         throw e
     }
@@ -79,5 +79,5 @@ String call(String next_version='1000', String distro=null) {
         return ''
     }
 
-    return v[0..<v.lastIndexOf('.')]
+    return v.replace(rpmDistVersion(_distro), '')
 }
