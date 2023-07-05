@@ -79,5 +79,5 @@ String call(String next_version='1000', String distro=null) {
         return ''
     }
 
-    return v.replace(rpmDistVersion(_distro), '')
+    return v.replace(rpmDistValue(_distro), '')
 }
