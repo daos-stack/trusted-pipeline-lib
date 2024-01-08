@@ -41,13 +41,23 @@ String call(String name, String def_val = null) {
     if (env.COMMIT_MESSAGE && env.COMMIT_MESSAGE != '') {
         commit_message = env.COMMIT_MESSAGE
     } else {
-        String cmd = 'if [ -n "$GIT_CHECKOUT_DIR" ] && ' +
-                     '''[ -d "$GIT_CHECKOUT_DIR" ]; then
-                          cd "$GIT_CHECKOUT_DIR"
-                        fi
-                        git show -s --format=%B\n'''
         commit_message = sh(label: 'Lookup commit message',
-                            script: cmd,
+                            script: '''set -eux -o pipefail
+                                       if [ -n "${GIT_CHECKOUT_DIR:-}" ] &&
+                                          [ -d "$GIT_CHECKOUT_DIR" ]; then
+                                           cd "$GIT_CHECKOUT_DIR"
+                                       fi
+                                       if ! git show -s --format=%B; then
+                                           if ! ls -ld .git; then
+                                               echo "Not in a git project, plowing on." >&2
+                                               exit 0
+                                           fi
+                                           ls -l .git
+                                           if ! git log | head -100; then
+                                               echo "Failed to get git log, plowing on." >&2
+                                               exit 0
+                                           fi
+                                       fi''',
                             returnStdout: true).trim()
     }
     return sh(label: 'Sanitize commmit message',
