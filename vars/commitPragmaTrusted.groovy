@@ -40,8 +40,10 @@ String call(String name, String def_val = null) {
      */
     if (env.COMMIT_MESSAGE && env.COMMIT_MESSAGE != '') {
         commit_message = env.COMMIT_MESSAGE
+        println("Getting commit message from env: " + commit_message)
     } else {
         commit_message = sh(label: 'Lookup commit message',
+                            /* groovylint-disable-next-line GStringExpressionWithinString */
                             script: '''set -eux -o pipefail
                                        if [ -n "${GIT_CHECKOUT_DIR:-}" ] &&
                                           [ -d "$GIT_CHECKOUT_DIR" ]; then
@@ -59,8 +61,9 @@ String call(String name, String def_val = null) {
                                            fi
                                        fi''',
                             returnStdout: true).trim()
+        println("Getting commit message from git" + commit_message)
     }
-    return sh(label: 'Sanitize commmit message',
+    String foo = sh(label: 'Sanitize commmit message',
               script: 'b=$(echo "' + commit_message.replaceAll('"', '\\\\"') +
                     '''" | sed -ne 's/^''' + name.replaceAll('/', '\\\\/') +
                     ''': *\\(.*\\)/\\1/Ip')
@@ -70,4 +73,7 @@ String call(String name, String def_val = null) {
                            echo "''' + def_value + '''"
                        fi''',
               returnStdout: true).trim()
+    print "Returning pragma: " + foo
+
+    return foo
 }
