@@ -25,7 +25,7 @@ pipeline {
         stage('Cancel Previous Builds') {
             when { changeRequest() }
             steps {
-                cancelPreviousBuilds()
+                cancelPreviousBuildsTrusted()
             }
         } // stage('Cancel Previous Builds')
 
@@ -74,9 +74,63 @@ Sleep-seconds: 2'''
                     // just make sure this doesn't trip an error due to the
                     // double quotes
                     assert(commitPragmaTrusted('sleep-seconds', '1') == '2')
+                    // Need to reset this environment variable for next stage
+                    env.COMMIT_MESSAGE = ''
                 }
             } // steps
         } //stage('env.COMMIT_MESSAGE pragma test')
+        stage('DAOS Build and Test') {
+            when {
+                beforeAgent true
+                expression {
+                    commitPragmaTrusted('DAOS-build-and-test', 'false') == 'true' &&
+                    currentBuild.currentResult == 'SUCCESS' &&
+                    !skipStage()
+                }
+            }
+            matrix {
+                axes {
+                    axis {
+                        name 'TEST_BRANCH'
+                        values 'master',
+                               'release/2.6'
+                    }
+                }
+                when {
+                    beforeAgent true
+                    expression {
+                        // Need to pass the stage name: https://issues.jenkins.io/browse/JENKINS-69394
+                        !skipStage([stage_name: 'Test Library',
+                                    axes: env.TEST_BRANCH.replaceAll('/', '-')])
+                    }
+                }
+                stages {
+                    stage('Test Library') {
+                        steps {
+                            // Normally we do not want to call pipeline-lib methods
+                            // from trusted-pipeline-lib, but this is needed
+                            // for properly running the DAOS testing.
+                            buildDaosJob(env.TEST_BRANCH, params.BuildPriority)
+                        } //steps
+                        post {
+                            success {
+                                script {
+                                    setupDownstreamTesting.cleanup('daos-stack/daos', env.TEST_BRANCH)
+                                }
+                            }
+                            always {
+                                writeFile file: stageStatusFilename(env.STAGE_NAME,
+                                                                    env.TEST_BRANCH.replaceAll('/', '-')),
+                                          text: currentBuild.currentResult + '\n'
+                                /* groovylint-disable-next-line LineLength */
+                                archiveArtifacts artifacts: stageStatusFilename(env.STAGE_NAME,
+                                                                                env.TEST_BRANCH.replaceAll('/', '-'))
+                            }
+                        } // post
+                    } // stage('Test Library')
+                } // stages
+            } // matrix
+        } // stage('DAOS Build and Test')
     } // stages
     post {
         success {
