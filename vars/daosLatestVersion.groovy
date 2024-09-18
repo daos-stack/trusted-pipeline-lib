@@ -28,14 +28,14 @@ String distro2repo(String distro) {
     }
 }
 
-String getLatestVersion(String distro, String type='stable') {
+String getLatestVersion(String distro, BigDecimal next_version, String type='stable') {
     String v = null
     String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
     println('repo: ' + repo)
     script = '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/' + repo +
                      ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
-                                  _next_version + '''' |
+                                  next_version + '''' |
                               rpmdev-sort | tail -1'''
     println('script: ' script)
     try {
@@ -87,5 +87,6 @@ String call(String next_version='1000', String distro=null) {
         }
     }
 
-    return getLatestVersion(_distro) || getLatestVersion(_distro, 'archive')
+    return getLatestVersion(_distro, _next_version) || 
+            getLatestVersion(_distro, _next_version, 'archive')
 }
