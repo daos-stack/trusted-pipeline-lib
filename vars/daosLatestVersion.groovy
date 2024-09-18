@@ -28,13 +28,13 @@ String distro2repo(String distro) {
     }
 }
 
-String getLatestVersion(String type='stable')
-{
+String getLatestVersion(String type='stable') {
     String v = null
     try {
+        repo = 'daos-stack-daos-' + distro2repo(_distro) + '-x86_64-' + type + '-local/'
         v = sh(label: 'Get RPM packages version',
                script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
-                       '/artifactory/daos-stack-daos-' + distro2repo(_distro) + '-x86_64-' + type + '-local/' +
+                       '/artifactory/' + repo +
                      ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
                                   _next_version + '''' |
                               rpmdev-sort | tail -1''',
@@ -43,7 +43,7 @@ String getLatestVersion(String type='stable')
     } catch (Exception e) {
         sh(label: 'Get debug info',
            script: 'hostname; pwd; df -h /var/cache; cat /etc/os-release')
-        println('Error getting latest daos version.')
+        println('Error getting latest daos version from the ' + repo + ' repository.')
         throw e
     }
 
@@ -84,10 +84,5 @@ String call(String next_version='1000', String distro=null) {
         }
     }
 
-    String v = getLatestVersion()
-
-    if (v) {
-        return v
-    }
-    return getLatestVersion('archive')
+    return getLatestVersion() || getLatestVersion('archive')
 }
