@@ -50,7 +50,7 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     }
 
     if (!v) {
-        return null
+        return ''
     }
 
     return v.replace(rpmDistValue(distro), '')
@@ -86,6 +86,7 @@ String call(String next_version='1000', String distro=null) {
         }
     }
 
-    return getLatestVersion(_distro, _next_version) || 
-            getLatestVersion(_distro, _next_version, 'archive')
+
+    return getLatestVersion(_distro, _next_version) // || 
+            // getLatestVersion(_distro, _next_version, 'archive')
 }
