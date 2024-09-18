@@ -30,8 +30,11 @@ String distro2repo(String distro) {
 
 String getLatestVersion(String distro, BigDecimal next_version, String type='stable') {
     String v = null
+    String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
+    println('repo: ' + repo)
+    println('next version: ' + next_version.toString())
     try {
-        v = sh(label: 'Get RPM packages version for: ' + repo + ' with next_version: ' + next_version.toString(),
+        v = sh(label: 'Get RPM packages version for: ' + repo + 'with next_version: ' + next_version.toString(),
                script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/' + repo +
                      ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
@@ -56,9 +59,6 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
 /* groovylint-disable-next-line UnusedMethodParameter */
 String call(String next_version='1000', String distro=null) {
     String _distro = distro ?: parseStageInfo()['target']
-    
-    println('next_version: ' + next_version)
-    println('distro: ' + distro)
 
     BigDecimal _next_version
     if (next_version == null) {
