@@ -36,8 +36,8 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
                script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/' + repo +
                      ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
-                                  next_version + '''' 2>/dev/null | rpmdev-sort | tail -1''',
-               returnStdout: true)
+                                  next_version + '''' | rpmdev-sort | tail -1''',
+               returnStdout: true).trim()
     /* groovylint-disable-next-line CatchException */
     } catch (Exception e) {
         sh(label: 'Get debug info',
@@ -49,10 +49,7 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     if (!v) {
         return ''
     }
-    println('Before replace v: ' + v)
-    v = v.replace(rpmDistValue(distro), '')
-    println('After replace v: ' + v)
-    return v
+    return v.replace(rpmDistValue(distro), '')
 }
 
 /* groovylint-disable-next-line UnusedMethodParameter */
@@ -88,6 +85,5 @@ String call(String next_version='1000', String distro=null) {
     if (v == '') {
         v = getLatestVersion(_distro, _next_version, 'archive')
     }
-    println('v: ' + v)
     return v
 }
