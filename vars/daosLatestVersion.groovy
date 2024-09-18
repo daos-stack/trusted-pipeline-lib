@@ -49,8 +49,10 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     if (!v) {
         return ''
     }
-    println('v: ' + v)
-    return v.replace(rpmDistValue(distro), '')
+    println('Before replace v: ' + v)
+    v = v.replace(rpmDistValue(distro), '')
+    println('After replace v: ' + v)
+    return v
 }
 
 /* groovylint-disable-next-line UnusedMethodParameter */
