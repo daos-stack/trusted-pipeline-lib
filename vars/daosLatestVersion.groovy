@@ -28,10 +28,10 @@ String distro2repo(String distro) {
     }
 }
 
-String getLatestVersion(String type='stable') {
+String getLatestVersion(String distro, String type='stable') {
     String v = null
     try {
-        String repo = 'daos-stack-daos-' + distro2repo(_distro) + '-x86_64-' + type + '-local/'
+        String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
         v = sh(label: 'Get RPM packages version',
                script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/' + repo +
@@ -84,5 +84,5 @@ String call(String next_version='1000', String distro=null) {
         }
     }
 
-    return getLatestVersion() || getLatestVersion('archive')
+    return getLatestVersion(_distro) || getLatestVersion(_distro, 'archive')
 }
