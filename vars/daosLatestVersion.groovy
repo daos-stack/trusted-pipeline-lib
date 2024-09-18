@@ -32,15 +32,14 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     String v = null
     String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
     println('repo: ' + repo)
-    String script = '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
+    println('next version: ' + next_version.toString())
+    try {
+        v = sh(label: 'Get RPM packages version for: ' + repo + 'with next_version: ' + next_version.toString(),
+               script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/' + repo +
                      ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
                                   next_version + '''' |
-                              rpmdev-sort | tail -1'''
-    println('script: ' script)
-    try {
-        v = sh(label: 'Get RPM packages version',
-               script: script,
+                              rpmdev-sort | tail -1''',
                returnStdout: true).trim()
     /* groovylint-disable-next-line CatchException */
     } catch (Exception e) {
