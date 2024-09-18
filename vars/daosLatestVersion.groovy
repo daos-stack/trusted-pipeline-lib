@@ -30,8 +30,9 @@ String distro2repo(String distro) {
 
 String getLatestVersion(String distro, String type='stable') {
     String v = null
+    String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
+    println('repo: ' + repo)
     try {
-        String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
         v = sh(label: 'Get RPM packages version',
                script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/' + repo +
@@ -51,7 +52,7 @@ String getLatestVersion(String distro, String type='stable') {
         return null
     }
 
-    return v.replace(rpmDistValue(_distro), '')
+    return v.replace(rpmDistValue(distro), '')
 }
 
 /* groovylint-disable-next-line UnusedMethodParameter */
