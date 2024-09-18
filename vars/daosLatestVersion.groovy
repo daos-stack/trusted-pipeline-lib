@@ -32,7 +32,7 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     String v = null
     String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
     println('repo: ' + repo)
-    script = '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
+    String script = '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
                        '/artifactory/' + repo +
                      ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
                                   next_version + '''' |
