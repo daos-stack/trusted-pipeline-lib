@@ -49,7 +49,7 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     if (!v) {
         return ''
     }
-
+    println('v: ' + v)
     return v.replace(rpmDistValue(distro), '')
 }
 
