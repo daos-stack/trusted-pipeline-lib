@@ -87,5 +87,6 @@ String call(String next_version='1000', String distro=null) {
     if (v == '') {
         v == getLatestVersion(_distro, _next_version, 'archive')
     }
+    println('v: ' + v)
     return v
 }
