@@ -28,6 +28,30 @@ String distro2repo(String distro) {
     }
 }
 
+String getLatestVersion(String distro, BigDecimal next_version, String type='stable') {
+    String v = null
+    String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
+    try {
+        v = sh(label: 'Get RPM packages version for: ' + repo + ' with version < ' + next_version.toString(),
+               script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
+                       '/artifactory/' + repo +
+                     ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
+                                  next_version + '''' | rpmdev-sort | tail -1''',
+               returnStdout: true).trim()
+    /* groovylint-disable-next-line CatchException */
+    } catch (Exception e) {
+        sh(label: 'Get debug info',
+           script: 'hostname; pwd; df -h /var/cache; cat /etc/os-release')
+        println('Error getting latest daos version from the ' + repo + ' repository.')
+        throw e
+    }
+
+    if (!v) {
+        return ''
+    }
+    return v.replace(rpmDistValue(distro), '')
+}
+
 /* groovylint-disable-next-line UnusedMethodParameter */
 String call(String next_version='1000', String distro=null) {
     String _distro = distro ?: parseStageInfo()['target']
@@ -57,27 +81,9 @@ String call(String next_version='1000', String distro=null) {
             }
         }
     }
-
-    String v = null
-    try {
-        v = sh(label: 'Get RPM packages version',
-               script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
-                       '/artifactory/daos-stack-daos-' + distro2repo(_distro) + '-x86_64-stable-local/' +
-                     ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
-                                  _next_version + '''' |
-                              rpmdev-sort | tail -1''',
-               returnStdout: true).trim()
-    /* groovylint-disable-next-line CatchException */
-    } catch (Exception e) {
-        sh(label: 'Get debug info',
-           script: 'hostname; pwd; df -h /var/cache; cat /etc/os-release')
-        println('Error getting latest daos version.')
-        throw e
+    String v = getLatestVersion(_distro, _next_version)
+    if (v == '') {
+        v = getLatestVersion(_distro, _next_version, 'archive')
     }
-
-    if (!v) {
-        return ''
-    }
-
-    return v.replace(rpmDistValue(_distro), '')
+    return v
 }
