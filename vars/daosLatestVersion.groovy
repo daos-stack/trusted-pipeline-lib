@@ -33,7 +33,7 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
     String artifactory_url = env.ARTIFACTORY_URL
     /* For backwards support, add the 'artifactory' path if it is missing from the env */
-    if (!artifactory_url.endswith('/artifactory')) {
+    if (!artifactory_url.endsWith('/artifactory')) {
         artifactory_url = "${artifactory_url}/artifactory"
     }
     /* debug */
