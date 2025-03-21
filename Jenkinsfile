@@ -17,6 +17,7 @@
 // Then a second PR submitted to comment out the @Library line, and when it
 // is landed, both PR branches can be deleted.
 //@Library(value="trusted-pipeline-lib@my_pr_branch") _
+@Library(value="trusted-pipeline-lib@hendersp/SRE-2931-fix") _
 
 /* groovylint-disable-next-line CompileStatic */
 pipeline {
@@ -83,7 +84,7 @@ Sleep-seconds: 2'''
             steps{
                 selfUnitTest()
             }
-        }
+        } // stage('Self Unit Tests'
         stage('DAOS Build and Test') {
             when {
                 beforeAgent true
