@@ -36,8 +36,6 @@ String getLatestVersion(String distro, BigDecimal next_version, String type='sta
     if (!artifactory_url.endsWith('/artifactory')) {
         artifactory_url = "${artifactory_url}/artifactory"
     }
-    /* debug */
-    print("artifactory_url=${artifactory_url}, env.ARTIFACTORY_URL=${env.ARTIFACTORY_URL}")
     try {
         v = sh(label: 'Get RPM packages version for: ' + repo + ' with version < ' + next_version.toString(),
                script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + artifactory_url + '/' +
