@@ -1,8 +1,8 @@
 /* groovylint-disable DuplicateNumberLiteral, ParameterName, VariableName */
-// vars/selfUnitTest.groovy
+// vars/trustedPipelineUnitTests.groovy
 
   /**
-   * selfUnitTest.groovy
+   * trustedPipelineUnitTests.groovy
    *
    * Runs trusted-pipeline-lib unit tests
    */

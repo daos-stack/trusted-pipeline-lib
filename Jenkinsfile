@@ -82,7 +82,7 @@ Sleep-seconds: 2'''
         } //stage('env.COMMIT_MESSAGE pragma test')
         stage('Self Unit Tests') {
             steps{
-                selfUnitTest()
+                trustedPipelineUnitTests()
             }
         } // stage('Self Unit Tests'
         stage('DAOS Build and Test') {
