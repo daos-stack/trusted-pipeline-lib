@@ -79,13 +79,9 @@ Sleep-seconds: 2'''
                 }
             } // steps
         } //stage('env.COMMIT_MESSAGE pragma test')
-        stage('daosLatestVersion() tests') {
-            steps {
-                script {
-                    assert(daosLatestVersion('master', 'el8').matches(/2.7\.\d++.*/))
-                    assert(daosLatestVersion('release/2.4', 'el8').matches(/2.[34]\.\d++.*/))
-                    assert(daosLatestVersion('release/2.6', 'el8').matches(/2.[56]\.\d++.*/))
-                }
+        stage('Self Unit Tests') {
+            steps{
+                selfUnitTest()
             }
         }
         stage('DAOS Build and Test') {
