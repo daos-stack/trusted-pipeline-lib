@@ -79,6 +79,11 @@ Sleep-seconds: 2'''
                 }
             } // steps
         } //stage('env.COMMIT_MESSAGE pragma test')
+        stage('Unit tests') {
+            steps{
+                trustedPipelineUnitTests()
+            }
+        } // stage('Unit tests')
         stage('DAOS Build and Test') {
             when {
                 beforeAgent true

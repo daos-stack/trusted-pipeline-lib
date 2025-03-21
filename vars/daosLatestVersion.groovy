@@ -31,12 +31,16 @@ String distro2repo(String distro) {
 String getLatestVersion(String distro, BigDecimal next_version, String type='stable') {
     String v = null
     String repo = 'daos-stack-daos-' + distro2repo(distro) + '-x86_64-' + type + '-local/'
+    String artifactory_url = env.ARTIFACTORY_URL
+    /* For backwards support, add the 'artifactory' path if it is missing from the env */
+    if (!artifactory_url.endsWith('/artifactory')) {
+        artifactory_url = "${artifactory_url}/artifactory"
+    }
     try {
         v = sh(label: 'Get RPM packages version for: ' + repo + ' with version < ' + next_version.toString(),
-               script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + env.ARTIFACTORY_URL +
-                       '/artifactory/' + repo +
-                     ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
-                                  next_version + '''' | rpmdev-sort | tail -1''',
+               script: '$(command -v dnf) --refresh repoquery --repofrompath=daos,' + artifactory_url + '/' +
+                       repo + ''' --repoid daos --qf %{version}-%{release} --whatprovides 'daos < ''' +
+                       next_version + '''' | rpmdev-sort | tail -1''',
                returnStdout: true).trim()
     /* groovylint-disable-next-line CatchException */
     } catch (Exception e) {
