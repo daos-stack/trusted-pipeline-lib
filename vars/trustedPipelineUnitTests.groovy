@@ -13,7 +13,7 @@ void call() {
 }
 
 void _run_unit_tests() {
-    // Run all the units
+    // Run all the unit tests
     println('Test daosLatestVersion()')
     _test_daosLatestVersion("master", "el8", /2.7\.\d++.*/)
     _test_daosLatestVersion('release/2.4', 'el8', /2.[34]\.\d++.*/)
