@@ -21,7 +21,7 @@ void _run_unit_tests() {
 }
 
 void _test_daosLatestVersion(String distro, String next_version, String expected) {
-    // Verify the value returned by daosLatestVersion() matches expected
+    // Verify the version returned by daosLatestVersion() matches expected
     println("  Running daosLatestVersion(distro=${distro}, next_version=${next_version})")
     result =daosLatestVersion(distro, next_version)
     println("    result:   ${result}")
